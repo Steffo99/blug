@@ -130,6 +130,12 @@ def api_blog():
         return ("", 204)
 
 
+@app.after_request
+def after_every_request(response):
+    response.headers["Access-Control-Allow-Origin"] = "*"
+return response
+
+
 if __name__ == "__main__":
     db.create_all()
     app.run(debug=True, port=1234)
