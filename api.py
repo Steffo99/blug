@@ -48,9 +48,9 @@ def api_blog():
             abort(400)
             return
         # Create the new post
-        post = db.BlogPost(author="Steffo",
-                           content=content,
-                           timestamp=timestamp)
+        post = BlogPost(author="Steffo",
+                        content=content,
+                        timestamp=timestamp)
         db.session.add(post)
         db.session.commit()
         return jsonify(post.as_dict())
@@ -68,14 +68,14 @@ def api_blog():
         time = request.args.get("time")
         limit = request.args.get("limit", 50)
         # Make the request
-        query = db.BlogPost.query()
+        query = BlogPost.query()
         if not authenticated:
             # Hide hidden posts if not authenticated
-            query = query.filter(db.BlogPost.timestamp <= now)
+            query = query.filter(BlogPost.timestamp <= now)
         if time is not None:
             # Hide all posts after the specified time
-            query = query.filter(db.BlogPost.timestamp <= time)
-        query = query.order_by(db.BlogPost.timestamp.desc())
+            query = query.filter(BlogPost.timestamp <= time)
+        query = query.order_by(BlogPost.timestamp.desc())
         query = query.limit(limit)
         query = query.all()
         return jsonify([post.as_dict() for post in query])
@@ -95,7 +95,7 @@ def api_blog():
         if post_id is None:
             abort(400)
             return
-        post = db.BlogPost.query().filter_by(post_id=post_id).one_or_404()
+        post = BlogPost.query().filter_by(post_id=post_id).one_or_404()
         # Get the new post contents
         content = request.form.get("content")
         if content is None:
@@ -133,7 +133,7 @@ def api_blog():
 @app.after_request
 def after_every_request(response):
     response.headers["Access-Control-Allow-Origin"] = "*"
-return response
+    return response
 
 
 if __name__ == "__main__":
